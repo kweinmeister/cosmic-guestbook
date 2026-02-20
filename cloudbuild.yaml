@@ -1,0 +1,18 @@
+steps:
+  # Step 1: Deploy to Cloud Run from source using Google Cloud Buildpacks
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'cosmic-guestbook'
+      - '--source'
+      - '.'
+      - '--region'
+      - 'us-central1'
+      - '--allow-unauthenticated'
+      - '--project'
+      - 'vertical-datum-418119'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
