@@ -48,6 +48,10 @@ app.get(/(.*)/, (req, res, next) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Backend listening on port ${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Backend listening on port ${port}`);
+  });
+}
+
+module.exports = app;

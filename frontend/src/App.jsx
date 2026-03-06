@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './index.css'
 
 function App() {
@@ -13,11 +13,7 @@ function App() {
   // We'll set a default that the user can change later, or we assume it's running locally for now.
   const API_URL = import.meta.env.VITE_API_URL || '/api/entries';
 
-  useEffect(() => {
-    fetchEntries();
-  }, []);
-
-  const fetchEntries = async () => {
+  const fetchEntries = useCallback(async () => {
     try {
       const res = await fetch(API_URL);
       if (res.ok) {
@@ -27,7 +23,11 @@ function App() {
     } catch (err) {
       console.error("Failed to fetch entries:", err);
     }
-  };
+  }, [API_URL]);
+
+  useEffect(() => {
+    fetchEntries();
+  }, [fetchEntries]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
