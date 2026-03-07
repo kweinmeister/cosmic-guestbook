@@ -1,20 +1,21 @@
 const request = require("supertest");
-const { OpenFeature } = require("@openfeature/server-sdk");
 
 describe("Guestbook API", () => {
-	let flagSpy;
 	let app;
 
 	beforeEach(() => {
 		jest.resetModules();
+		// Mock the entire features module so the server imports our manual mock
+		jest.mock("./features", () => ({
+			featureClient: {
+				getBooleanValue: jest.fn().mockResolvedValue(false),
+			},
+		}));
 		app = require("./server");
-		flagSpy = jest
-			.spyOn(OpenFeature.getClient(), "getBooleanValue")
-			.mockResolvedValue(false);
 	});
 
 	afterEach(() => {
-		flagSpy.mockRestore();
+		jest.unmock("./features");
 	});
 
 	it("GET /api/entries returns an array of entries", async () => {
@@ -55,19 +56,20 @@ describe("Guestbook API", () => {
 });
 
 describe("Summary API", () => {
-	let flagSpy;
 	let app;
 
 	beforeEach(() => {
 		jest.resetModules();
+		jest.mock("./features", () => ({
+			featureClient: {
+				getBooleanValue: jest.fn().mockResolvedValue(false),
+			},
+		}));
 		app = require("./server");
-		flagSpy = jest
-			.spyOn(OpenFeature.getClient(), "getBooleanValue")
-			.mockResolvedValue(false);
 	});
 
 	afterEach(() => {
-		flagSpy.mockRestore();
+		jest.unmock("./features");
 	});
 
 	it("GET /api/summary returns JSON with summary and enabled fields", async () => {
