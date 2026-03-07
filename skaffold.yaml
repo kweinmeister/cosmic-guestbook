@@ -1,0 +1,16 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: cosmic-guestbook
+build:
+  artifacts:
+    - image: cosmic-guestbook
+      buildpacks:
+        builder: gcr.io/buildpacks/builder:v1
+        env:
+          - GOOGLE_NODE_RUN_SCRIPTS=gcp-build
+manifests:
+  rawYaml:
+    - service.yaml
+deploy:
+  cloudrun: {}
