@@ -1,30 +1,21 @@
 steps:
   # Step 1: Install, Lint, and Test Backend
   - name: 'node:20'
-    entrypoint: 'npm'
-    args: ['ci']
-    dir: 'backend'
-  - name: 'node:20'
-    entrypoint: 'npm'
-    args: ['run', 'lint']
-    dir: 'backend'
-  - name: 'node:20'
-    entrypoint: 'npm'
-    args: ['run', 'test']
+    id: 'backend-test'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'npm ci && npm run lint && npm run test'
     dir: 'backend'
 
   # Step 2: Install, Lint, and Test Frontend
   - name: 'node:20'
-    entrypoint: 'npm'
-    args: ['ci']
-    dir: 'frontend'
-  - name: 'node:20'
-    entrypoint: 'npm'
-    args: ['run', 'lint']
-    dir: 'frontend'
-  - name: 'node:20'
-    entrypoint: 'npm'
-    args: ['run', 'test']
+    id: 'frontend-test'
+    waitFor: ['-']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'npm ci && npm run lint && npm run test'
     dir: 'frontend'
 
   # Step 3: Deploy to Cloud Run from source using Google Cloud Buildpacks
@@ -40,7 +31,7 @@ steps:
   #     - 'us-central1'
   #     - '--allow-unauthenticated'
   #     - '--project'
-  #     - 'vertical-datum-418119'
+  #     - '$PROJECT_ID'
 
 options:
   logging: CLOUD_LOGGING_ONLY

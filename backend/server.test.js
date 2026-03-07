@@ -1,11 +1,13 @@
 const request = require("supertest");
 const { OpenFeature } = require("@openfeature/server-sdk");
-const app = require("./server");
 
 describe("Guestbook API", () => {
 	let flagSpy;
+	let app;
 
 	beforeEach(() => {
+		jest.resetModules();
+		app = require("./server");
 		flagSpy = jest
 			.spyOn(OpenFeature.getClient(), "getBooleanValue")
 			.mockResolvedValue(false);
@@ -19,7 +21,7 @@ describe("Guestbook API", () => {
 		const res = await request(app).get("/api/entries");
 		expect(res.statusCode).toEqual(200);
 		expect(Array.isArray(res.body)).toBeTruthy();
-		expect(res.body.length).toBeGreaterThanOrEqual(1);
+		expect(res.body).toHaveLength(1);
 	});
 
 	it("POST /api/entries adds a new entry", async () => {
@@ -44,12 +46,21 @@ describe("Guestbook API", () => {
 		const res = await request(app).post("/api/entries").send(newEntry);
 		expect(res.statusCode).toEqual(400);
 	});
+
+	it("POST /api/entries without message returns 400", async () => {
+		const newEntry = { name: "Test User" };
+		const res = await request(app).post("/api/entries").send(newEntry);
+		expect(res.statusCode).toEqual(400);
+	});
 });
 
 describe("Summary API", () => {
 	let flagSpy;
+	let app;
 
 	beforeEach(() => {
+		jest.resetModules();
+		app = require("./server");
 		flagSpy = jest
 			.spyOn(OpenFeature.getClient(), "getBooleanValue")
 			.mockResolvedValue(false);

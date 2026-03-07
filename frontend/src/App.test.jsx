@@ -107,4 +107,24 @@ describe("App component", () => {
 		});
 		expect(screen.queryByText(/Station Zenith AI/i)).not.toBeInTheDocument();
 	});
+
+	it("handles fetch error gracefully", async () => {
+		window.fetch.mockRejectedValueOnce(new Error("Network error"));
+		const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+		render(<App />);
+
+		await waitFor(() => {
+			expect(
+				screen.getByText(/Awaiting first transmission/i),
+			).toBeInTheDocument();
+		});
+
+		expect(consoleSpy).toHaveBeenCalledWith(
+			"Failed to fetch entries:",
+			expect.any(Error)
+		);
+
+		consoleSpy.mockRestore();
+	});
 });
