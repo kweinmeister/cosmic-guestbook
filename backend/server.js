@@ -37,7 +37,7 @@ if (!project) {
 const genAIClient = new GoogleGenAI({
 	vertexai: true,
 	project,
-	location: process.env.GOOGLE_CLOUD_LOCATION || "us-central1",
+	location: process.env.GOOGLE_CLOUD_LOCATION || "global",
 });
 
 app.get("/api/entries", (_req, res) => {
