@@ -122,7 +122,7 @@ describe("App component", () => {
 
 		expect(consoleSpy).toHaveBeenCalledWith(
 			"Failed to fetch entries:",
-			expect.any(Error)
+			expect.any(Error),
 		);
 
 		consoleSpy.mockRestore();

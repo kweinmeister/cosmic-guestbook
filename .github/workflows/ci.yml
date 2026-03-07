@@ -26,6 +26,8 @@ jobs:
     - name: Run Biome Lint
       run: npm run lint
     - name: Run Jest Tests
+      env:
+        GOOGLE_CLOUD_PROJECT: "test-project"
       run: npm run test
 
   frontend-test:
