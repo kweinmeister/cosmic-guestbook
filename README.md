@@ -97,3 +97,10 @@ to `enabled` or `disabled` within this configuration document.
 > In production, the Cloud Run sidecar pulls this file directly from the
 > main branch of the GitHub repository to evaluate feature flags remotely,
 > decoupling flags from code deployments.
+
+### Available Flags
+
+| Flag Key | Type | Default | Description |
+| :--- | :---: | :---: | :--- |
+| `cosmic-reply` | Boolean | `false` | Enables GenAI auto-replies from "Station Zenith AI" for new guestbook transmissions. |
+| `cosmic-summary` | Boolean | `false` | Enables the GenAI aggregation widget that summarizes recent guestbook activity at the top of the feed. |
