@@ -1,6 +1,6 @@
 steps:
   # Step 1: Install, Lint, and Test Backend
-  - name: 'node:24'
+  - name: 'node:24-slim'
     id: 'backend-test'
     entrypoint: 'bash'
     args:
@@ -9,7 +9,7 @@ steps:
     dir: 'backend'
 
   # Step 2: Install, Lint, and Test Frontend
-  - name: 'node:24'
+  - name: 'node:24-slim'
     id: 'frontend-test'
     waitFor: ['-']
     entrypoint: 'bash'
@@ -18,7 +18,16 @@ steps:
       - 'npm ci && npm run lint && npm run test'
     dir: 'frontend'
 
-  # Step 3: Deploy to Cloud Run via Cloud Deploy
+  # Step 3: Build the Container Image
+  - name: 'gcr.io/k8s-skaffold/skaffold'
+    entrypoint: 'skaffold'
+    args:
+      - 'build'
+      - '--interactive=false'
+      - '--file-output=/workspace/artifacts.json'
+      - '--default-repo=us-central1-docker.pkg.dev/$PROJECT_ID/docker-repo'
+
+  # Step 4: Deploy to Cloud Run via Cloud Deploy
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -26,7 +35,7 @@ steps:
       - |
         sed "s/__PROJECT_ID__/$PROJECT_ID/g" clouddeploy.yaml > /tmp/clouddeploy.yaml && \
         gcloud deploy apply --file=/tmp/clouddeploy.yaml --region=us-central1 && \
-        gcloud deploy releases create release-$BUILD_ID --delivery-pipeline=cosmic-guestbook-pipeline --region=us-central1 --deploy-parameters="REPOSITORY_SLUG=$REPO_FULL_NAME" --source=.
+        gcloud deploy releases create release-$BUILD_ID --delivery-pipeline=cosmic-guestbook-pipeline --region=us-central1 --deploy-parameters="REPOSITORY_SLUG=$REPO_FULL_NAME,PROJECT_ID=$PROJECT_ID" --build-artifacts=/workspace/artifacts.json --source=.
 
 options:
   logging: CLOUD_LOGGING_ONLY

@@ -9,12 +9,15 @@ spec:
         - image: cosmic-guestbook
           ports:
             - containerPort: 8080
+          env:
+            - name: GOOGLE_CLOUD_PROJECT
+              value: "REPLACED_BY_DEPLOY" # from-param: ${PROJECT_ID}
         - image: gofeatureflag/go-feature-flag:latest
           env:
             - name: RETRIEVERS_0_KIND
               value: github
             - name: RETRIEVERS_0_REPOSITORYSLUG
-              value: ${REPOSITORY_SLUG}
+              value: "REPLACED_BY_DEPLOY" # from-param: ${REPOSITORY_SLUG}
             - name: RETRIEVERS_0_PATH
               value: flags.yaml
             - name: RETRIEVERS_0_BRANCH
