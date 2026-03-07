@@ -18,20 +18,14 @@ steps:
       - 'npm ci && npm run lint && npm run test'
     dir: 'frontend'
 
-  # Step 3: Deploy to Cloud Run from source using Google Cloud Buildpacks
-  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  #   entrypoint: gcloud
-  #   args:
-  #     - 'run'
-  #     - 'deploy'
-  #     - 'cosmic-guestbook'
-  #     - '--source'
-  #     - '.'
-  #     - '--region'
-  #     - 'us-central1'
-  #     - '--allow-unauthenticated'
-  #     - '--project'
-  #     - '$PROJECT_ID'
+  # Step 3: Deploy to Cloud Run via Cloud Deploy
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        gcloud deploy apply --file=clouddeploy.yaml --region=us-central1
+        gcloud deploy releases create release-$$BUILD_ID --delivery-pipeline=cosmic-guestbook-pipeline --region=us-central1 --deploy-parameters="REPOSITORY_SLUG=$$REPO_FULL_NAME" --source=.
 
 options:
   logging: CLOUD_LOGGING_ONLY
