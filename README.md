@@ -39,6 +39,14 @@ initiating a new deployment.
 
 The deployment pipeline is fully orchestrated using a modern Google Cloud stack.
 
+> [!IMPORTANT]
+> **IAM Requirements**: Cloud Build executes using its default service account. Because this pipeline natively integrates with Cloud Deploy, you **must** grant the Cloud Build service account (`[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com`) the following IAM roles:
+>
+> * `roles/clouddeploy.admin` (Provides full control over delivery pipelines, targets, releases, and rollouts)
+> * `roles/iam.serviceAccountUser` (Allows Cloud Build to act as the default compute account to run the application)
+>
+> You can optionally apply these on standard project setup via Terraform, or manually execute the `gcloud projects add-iam-policy-binding` command.
+
 [cloudbuild.yaml](./cloudbuild.yaml) drives the continuous integration,
 executing dependencies installation, codebase linting with Biome, and
 evaluating Vitest/Jest test suites with coverage.
@@ -54,6 +62,17 @@ to the production Cloud Run environment.
 advanced multi-container sidecar pattern. The main node application runs
 alongside a `go-feature-flag` sidecar container that efficiently retrieves
 live feature flag configurations directly from `flags.yaml`.
+
+> [!TIP]
+> **Build Optimizations**: The repository includes both `.gcloudignore` and `.dockerignore` files. `gcloud builds submit` utilizes `.gcloudignore` for the initial Cloud Build upload, while the internal `gcloud deploy` step uses Skaffold, which strictly follows `.dockerignore`. Both are configured to exclude local `node_modules` folders, which keeps the deployment context size under 1MB and dramatically speeds up CI turnaround.
+
+### 🧪 Testing the CI/CD Pipeline Locally
+
+Developers can test the exact Cloud Build pipeline from their local machine before pushing to GitHub. Because the final deploy relies on the natively injected GitHub `$REPO_FULL_NAME` variable, you need to provide it via substitution during manual submissions:
+
+```bash
+gcloud beta builds submit --config=cloudbuild.yaml --substitutions=REPO_FULL_NAME="kweinmeister/cosmic-guestbook" .
+```
 
 ## 🛠️ Local Development
 

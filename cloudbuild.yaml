@@ -1,15 +1,15 @@
 steps:
   # Step 1: Install, Lint, and Test Backend
-  - name: 'node:20'
+  - name: 'node:24'
     id: 'backend-test'
     entrypoint: 'bash'
     args:
       - '-c'
-      - 'npm ci && npm run lint && npm run test'
+      - 'npm ci && npm run lint && GOOGLE_CLOUD_PROJECT="demo-project" npm run test'
     dir: 'backend'
 
   # Step 2: Install, Lint, and Test Frontend
-  - name: 'node:20'
+  - name: 'node:24'
     id: 'frontend-test'
     waitFor: ['-']
     entrypoint: 'bash'
@@ -24,8 +24,9 @@ steps:
     args:
       - '-c'
       - |
+        sed -i "s/__PROJECT_ID__/$PROJECT_ID/g" clouddeploy.yaml && \
         gcloud deploy apply --file=clouddeploy.yaml --region=us-central1 && \
-        gcloud deploy releases create release-$$BUILD_ID --delivery-pipeline=cosmic-guestbook-pipeline --region=us-central1 --deploy-parameters="REPOSITORY_SLUG=$$REPO_FULL_NAME" --source=.
+        gcloud deploy releases create release-$BUILD_ID --delivery-pipeline=cosmic-guestbook-pipeline --region=us-central1 --deploy-parameters="REPOSITORY_SLUG=$REPO_FULL_NAME" --source=.
 
 options:
   logging: CLOUD_LOGGING_ONLY
