@@ -52,8 +52,7 @@ The deployment pipeline is fully orchestrated using a modern Google Cloud stack.
 executing dependencies installation, codebase linting with Biome, and
 evaluating Vitest/Jest test suites with coverage.
 
-[skaffold.yaml](./skaffold.yaml) compiles the container images directly from
-the source code without a Dockerfile and prepares manifests for staging.
+[skaffold.yaml](./skaffold.yaml) compiles the container images securely utilizing the project [Dockerfile](./Dockerfile) and prepares manifests for staging.
 
 [clouddeploy.yaml](./clouddeploy.yaml) actively drives the continuous
 delivery process, initiating canary deployments (50% traffic splitting) out
