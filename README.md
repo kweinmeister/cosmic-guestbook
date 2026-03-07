@@ -1,26 +1,106 @@
-# Cosmic Guestbook
+<!-- markdownlint-disable MD033 MD041 -->
+<div align="center">
+  <h1>✨ Cosmic Guestbook</h1>
+  <p><i>Leave your mark on the universe.</i></p>
 
-A full-stack Node.js and React application featuring a guestbook interface, deployed to Google Cloud Run via an automated CI/CD pipeline using Google Cloud Build.
+  [![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=flat&logo=nodedotjs)](https://nodejs.org/)
+  [![React](https://img.shields.io/badge/React-19.x-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
+  [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
+  [![Google Cloud](https://img.shields.io/badge/Google_Cloud-Deployed-4285F4?style=flat&logo=googlecloud)](https://cloud.google.com/)
+  [![Biome](https://img.shields.io/badge/Biome-Linter_&_Formatter-60A5FA?style=flat&logo=biome)](https://biomejs.dev/)
+</div>
 
-## Application Structure
+<br />
 
-- **Frontend**: A React single-page application built with Vite. It provides the user interface for the guestbook.
-- **Backend**: An Express.js API serving an in-memory guestbook (handling `GET` and `POST` at `/api/entries`) and serving the static frontend build.
+A full-stack modern web application featuring an interactive guestbook
+interface. Seamlessly deployed to **Google Cloud Run** via an automated CI/CD
+pipeline using **Google Cloud Build** and **Google Cloud Deploy**.
 
-## CI/CD Pipeline
+## 🚀 Application Architecture
 
-The project uses Google Cloud Build (`cloudbuild.yaml`) for Continuous Integration. The pipeline currently includes steps to:
-1. **Backend Integration & Testing**: Runs `npm ci`, `npm run lint`, and `npm run test` on the Node 20 environment.
-2. **Frontend Integration & Testing**: Runs `npm ci`, `npm run lint`, and `npm run test` (via Vitest) on the Node 20 environment.
+The application is logically separated between its
+[**Frontend**](./frontend/) and [**Backend**](./backend/).
 
-## Running Locally
+The React single-page frontend is powered by Vite and provides the
+primary interactive user interface for the guestbook. The Express.js backend
+serves both the in-memory guestbook API (`/api/entries`) and the
+compiled static frontend assets.
 
-To run the application locally, you can start the backend and frontend separately:
-- **Backend**: `cd backend && npm install && node server.js` (runs on port 8080)
-- **Frontend**: `cd frontend && npm install && npm run dev` (runs Vite dev server)
+The backend fundamentally integrates with **Google Vertex AI (Gemini)** to
+offer intelligent features. Visitors will encounter real-time auto-replies
+to new guestbook entries from "Station Zenith AI," along with generated
+contextual summaries of recent transmissions.
 
-Alternatively, you can build the frontend and serve it through the backend by using the top-level script:
+We leverage OpenFeature alongside a GO Feature Flag provider to dynamically
+toggle these AI features safely using [flags.yaml](./flags.yaml) without
+initiating a new deployment.
+
+## 🛳️ Deployment & CI/CD Pipeline
+
+The deployment pipeline is fully orchestrated using a modern Google Cloud stack.
+
+[cloudbuild.yaml](./cloudbuild.yaml) drives the continuous integration,
+executing dependencies installation, codebase linting with Biome, and
+evaluating Vitest/Jest test suites with coverage.
+
+[skaffold.yaml](./skaffold.yaml) compiles the container images directly from
+the source code without a Dockerfile and prepares manifests for staging.
+
+[clouddeploy.yaml](./clouddeploy.yaml) actively drives the continuous
+delivery process, initiating canary deployments (50% traffic splitting) out
+to the production Cloud Run environment.
+
+[service.yaml](./service.yaml) defines the Cloud Run service, utilizing an
+advanced multi-container sidecar pattern. The main node application runs
+alongside a `go-feature-flag` sidecar container that efficiently retrieves
+live feature flag configurations directly from `flags.yaml`.
+
+## 🛠️ Local Development
+
+To run the application locally, you can operate the backend and frontend
+separately for hot-module reloading:
+
+### 1. Start the Backend API
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+### 2. Start the Frontend Application
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Building for Production Locally
+
+Alternatively, you can compile the frontend and serve it directly through
+the Express backend using the top-level workspace scripts:
+
 ```bash
 npm run gcp-build
 npm start
 ```
+
+## 🎛️ Managing Feature Flags
+
+When running safely in local development, the backend reads feature flag
+states directly from the local [flags.yaml](./flags.yaml) file. You can
+dynamically toggle the AI features by modifying `defaultRule.variation`
+to `enabled` or `disabled` within this configuration document.
+
+> [!NOTE]
+> In production, the Cloud Run sidecar pulls this file directly from the
+> main branch of the GitHub repository to evaluate feature flags remotely,
+> decoupling flags from code deployments.
+
+### Available Flags
+
+| Flag Key | Type | Default | Description |
+| :--- | :---: | :---: | :--- |
+| `cosmic-reply` | Boolean | `false` | Enables GenAI auto-replies from "Station Zenith AI" for new guestbook transmissions. |
+| `cosmic-summary` | Boolean | `false` | Enables the GenAI aggregation widget that summarizes recent guestbook activity at the top of the feed. |

@@ -1,0 +1,16 @@
+# GO Feature Flag configuration
+# Toggle cosmic-summary to true to enable the GenAI summary feature.
+# Toggle cosmic-reply to true to enable AI auto-replies on new entries.
+cosmic-summary:
+  variations:
+    enabled: true
+    disabled: false
+  defaultRule:
+    variation: disabled
+
+cosmic-reply:
+  variations:
+    enabled: true
+    disabled: false
+  defaultRule:
+    variation: disabled

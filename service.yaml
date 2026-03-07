@@ -1,0 +1,21 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: cosmic-guestbook
+spec:
+  template:
+    spec:
+      containers:
+        - image: cosmic-guestbook
+          ports:
+            - containerPort: 8080
+        - image: gofeatureflag/go-feature-flag:latest
+          env:
+            - name: RETRIEVERS_0_KIND
+              value: github
+            - name: RETRIEVERS_0_REPOSITORYSLUG
+              value: ${REPOSITORY_SLUG}
+            - name: RETRIEVERS_0_PATH
+              value: flags.yaml
+            - name: RETRIEVERS_0_BRANCH
+              value: main
