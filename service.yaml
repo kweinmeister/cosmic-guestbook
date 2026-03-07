@@ -14,7 +14,7 @@ spec:
             - name: RETRIEVERS_0_KIND
               value: github
             - name: RETRIEVERS_0_REPOSITORYSLUG
-              value: kweinmeister/cosmic-guestbook
+              value: ${REPOSITORY_SLUG}
             - name: RETRIEVERS_0_PATH
               value: flags.yaml
             - name: RETRIEVERS_0_BRANCH

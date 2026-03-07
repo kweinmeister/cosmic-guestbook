@@ -25,7 +25,6 @@ function createLocalProvider() {
 				disabled: false,
 				variants: { enabled: true, disabled: false },
 				defaultVariant: isEnabled ? "enabled" : "disabled",
-				contextEvaluator: () => (isEnabled ? "enabled" : "disabled"),
 			};
 		}
 

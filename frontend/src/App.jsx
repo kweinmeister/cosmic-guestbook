@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import "./index.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
+const API_URL = `${API_BASE_URL}/entries`;
+const SUMMARY_URL = `${API_BASE_URL}/summary`;
+
 function App() {
 	const [entries, setEntries] = useState([]);
 	const [name, setName] = useState("");
@@ -8,11 +12,6 @@ function App() {
 	const [loading, setLoading] = useState(false);
 	const [summary, setSummary] = useState(null);
 	const [summaryLoading, setSummaryLoading] = useState(false);
-
-	const API_URL = import.meta.env.VITE_API_URL || "/api/entries";
-	const SUMMARY_URL = import.meta.env.VITE_API_URL
-		? import.meta.env.VITE_API_URL.replace("/entries", "/summary")
-		: "/api/summary";
 
 	const fetchEntries = useCallback(async () => {
 		try {

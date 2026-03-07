@@ -22,4 +22,4 @@ metadata:
   name: prod
 description: Production Cloud Run service
 run:
-  location: projects/YOUR_PROJECT_ID/locations/us-central1
+  location: projects/${PROJECT_ID}/locations/us-central1
