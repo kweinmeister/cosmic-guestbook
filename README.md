@@ -42,7 +42,9 @@ The deployment pipeline is fully orchestrated using a modern Google Cloud stack.
 > [!IMPORTANT]
 > **IAM Requirements**: Cloud Build executes using its default service account. Because this pipeline natively integrates with Cloud Deploy, you **must** grant the Cloud Build service account (`[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com`) the following IAM roles:
 >
-> * `roles/clouddeploy.admin` (Provides full control over delivery pipelines, targets, releases, and rollouts)
+> * `roles/clouddeploy.deliveryPipelineEditor` (Allows creating and modifying delivery pipelines)
+> * `roles/clouddeploy.targetEditor` (Allows creating and modifying targets)
+> * `roles/clouddeploy.releaser` (Allows creating releases and rollouts)
 > * `roles/iam.serviceAccountUser` (Allows Cloud Build to act as the default compute account to run the application)
 >
 > You can optionally apply these on standard project setup via Terraform, or manually execute the `gcloud projects add-iam-policy-binding` command.
