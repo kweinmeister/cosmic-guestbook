@@ -24,7 +24,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud deploy apply --file=clouddeploy.yaml --region=us-central1
+        gcloud deploy apply --file=clouddeploy.yaml --region=us-central1 && \
         gcloud deploy releases create release-$$BUILD_ID --delivery-pipeline=cosmic-guestbook-pipeline --region=us-central1 --deploy-parameters="REPOSITORY_SLUG=$$REPO_FULL_NAME" --source=.
 
 options:
