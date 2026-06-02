@@ -86,7 +86,10 @@ describe("Cosmic Guestbook API", () => {
 			// The 101st request should be rate-limited
 			const res = await request(app).get("/api/entries");
 			expect(res.statusCode).toEqual(429);
-			expect(res.body).toHaveProperty("error", "Too many requests, please try again later.");
+			expect(res.body).toHaveProperty(
+				"error",
+				"Too many requests, please try again later.",
+			);
 		});
 	});
 });
