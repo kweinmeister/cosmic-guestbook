@@ -17,7 +17,7 @@ function createLocalProvider() {
 
 		// Transform GO Feature Flag YAML structure into OpenFeature InMemoryProvider structure
 		for (const [flagName, flagData] of Object.entries(parsedFlags)) {
-			if (!flagData || !flagData.variations || !flagData.defaultRule) continue;
+			if (!flagData?.variations || !flagData?.defaultRule) continue;
 
 			const isEnabled = flagData.defaultRule.variation === "enabled";
 

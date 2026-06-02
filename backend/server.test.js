@@ -71,4 +71,25 @@ describe("Cosmic Guestbook API", () => {
 			expect(res.body.summary).toBeNull();
 		});
 	});
+
+	describe("Rate Limiting", () => {
+		it("allows requests under the limit", async () => {
+			const res = await request(app).get("/api/entries");
+			expect(res.statusCode).toEqual(200);
+		});
+
+		it("returns 429 when rate limit is exceeded", async () => {
+			// Send 100 requests to hit the limit
+			for (let i = 0; i < 100; i++) {
+				await request(app).get("/api/entries");
+			}
+			// The 101st request should be rate-limited
+			const res = await request(app).get("/api/entries");
+			expect(res.statusCode).toEqual(429);
+			expect(res.body).toHaveProperty(
+				"error",
+				"Too many requests, please try again later.",
+			);
+		});
+	});
 });

@@ -21,4 +21,4 @@ spec:
             - name: RETRIEVERS_0_PATH
               value: flags.yaml
             - name: RETRIEVERS_0_BRANCH
-              value: main
+              value: gitops

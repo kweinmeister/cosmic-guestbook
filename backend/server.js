@@ -2,14 +2,25 @@ require("dotenv").config();
 const path = require("node:path");
 const express = require("express");
 const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const { featureClient } = require("./features");
 const { GoogleGenAI } = require("@google/genai");
 
 const app = express();
 const port = process.env.PORT || 8080;
 
+// Rate limiter to prevent DoS attacks on expensive/file-system operations
+const limiter = rateLimit({
+	windowMs: 15 * 60 * 1000, // 15 minutes
+	max: 100, // Limit each IP to 100 requests per window
+	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+	message: { error: "Too many requests, please try again later." },
+});
+
 app.use(cors());
 app.use(express.json());
+app.use(limiter);
 
 // Serve static frontend build
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
