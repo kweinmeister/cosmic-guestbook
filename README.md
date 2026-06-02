@@ -121,7 +121,7 @@ In production, feature flags are managed via GitOps to decouple flag changes fro
 #### The Branch Split Model
 
 - **`main` branch:** Holds stable application code, backend endpoints, and infrastructure specs. Pushing to `main` triggers container builds and Cloud Deploy canary releases.
-- **`gitops` branch:** Dedicated exclusively to managing `flags.yaml`. The running Cloud Run sidecar container continuously polls this branch in your fork on a cron interval and hot-reloads the flag state in memory.
+- **`gitops` branch:** Dedicated exclusively to managing `flags.yaml`. The running Cloud Run sidecar container continuously polls this branch in your fork at a regular interval and hot-reloads the flag state in memory.
 
 #### Toggling Features in Production
 
