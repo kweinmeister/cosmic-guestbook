@@ -2,7 +2,17 @@
   "name": "cosmic-guestbook",
   "version": "1.0.0",
   "scripts": {
+    "build": "npm run gcp-build",
+    "dev": "concurrently -n \"backend,frontend\" -c \"blue,cyan\" \"npm run start:backend\" \"npm run start:frontend\"",
     "gcp-build": "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend",
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "start:backend": "npm run start",
+    "start:frontend": "npm run dev --prefix frontend",
+    "test": "concurrently -n \"backend,frontend\" -c \"blue,cyan\" \"npm run test:backend\" \"npm run test:frontend\"",
+    "test:backend": "npm run test --prefix backend",
+    "test:frontend": "npm run test --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
   }
 }
