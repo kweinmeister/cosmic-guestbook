@@ -73,7 +73,6 @@ function App() {
 			<div className="stars"></div>
 			<div className="twinkling"></div>
 
-
 			<main className="glass-panel">
 				<header>
 					<h1>
