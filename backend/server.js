@@ -44,6 +44,7 @@ app.get("/api/entries", (_req, res) => {
 	res.json(entries);
 });
 
+
 app.post("/api/entries", async (req, res) => {
 	const { name, message } = req.body;
 	if (!name || !message) {

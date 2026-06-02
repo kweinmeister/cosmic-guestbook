@@ -3,11 +3,12 @@
   <h1>✨ Cosmic Guestbook</h1>
   <p><i>Leave your mark on the universe.</i></p>
 
-  [![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=flat&logo=nodedotjs)](https://nodejs.org/)
-  [![React](https://img.shields.io/badge/React-19.x-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
-  [![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
-  [![Google Cloud](https://img.shields.io/badge/Google_Cloud-Deployed-4285F4?style=flat&logo=googlecloud)](https://cloud.google.com/)
-  [![Biome](https://img.shields.io/badge/Biome-Linter_&_Formatter-60A5FA?style=flat&logo=biome)](https://biomejs.dev/)
+[![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?style=flat&logo=nodedotjs)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19.x-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5.x-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
+[![Google Cloud](https://img.shields.io/badge/Google_Cloud-Deployed-4285F4?style=flat&logo=googlecloud)](https://cloud.google.com/)
+[![Biome](https://img.shields.io/badge/Biome-Linter_&_Formatter-60A5FA?style=flat&logo=biome)](https://biomejs.dev/)
+
 </div>
 
 <br />
@@ -42,9 +43,9 @@ The deployment pipeline is fully orchestrated using a modern Google Cloud stack.
 > [!IMPORTANT]
 > **IAM Requirements**: Cloud Build executes using its default service account. Because this pipeline natively integrates with Cloud Deploy, you **must** grant the Cloud Build service account (`[PROJECT_NUMBER]@cloudbuild.gserviceaccount.com`) the following IAM roles:
 >
-> * `roles/clouddeploy.operator` (Allows creating and modifying delivery pipelines and targets)
-> * `roles/clouddeploy.releaser` (Allows creating releases and rollouts)
-> * `roles/iam.serviceAccountUser` (Allows Cloud Build to act as the default compute account to run the application)
+> - `roles/clouddeploy.operator` (Allows creating and modifying delivery pipelines and targets)
+> - `roles/clouddeploy.releaser` (Allows creating releases and rollouts)
+> - `roles/iam.serviceAccountUser` (Allows Cloud Build to act as the default compute account to run the application)
 >
 > You can optionally apply these on standard project setup via Terraform, or manually execute the `gcloud projects add-iam-policy-binding` command.
 
@@ -105,21 +106,34 @@ npm run gcp-build
 npm start
 ```
 
-## 🎛️ Managing Feature Flags
+## 🛠️ Feature Flags & GitOps Management
 
-When running safely in local development, the backend reads feature flag
-states directly from the local [flags.yaml](./flags.yaml) file. You can
-dynamically toggle the AI features by modifying `defaultRule.variation`
-to `enabled` or `disabled` within this configuration document.
+This application leverages the **Cloud Run multi-container sidecar pattern** to implement zero-downtime feature management using OpenFeature and `go-feature-flag`.
 
-> [!NOTE]
-> In production, the Cloud Run sidecar pulls this file directly from the
-> main branch of the GitHub repository to evaluate feature flags remotely,
-> decoupling flags from code deployments.
+### 💻 Local Development Toggling
 
-### Available Flags
+When running safely in local development, the backend reads feature flag states directly from the local [flags.yaml](./flags.yaml) file. You can dynamically toggle the AI features by modifying `defaultRule.variation` to `enabled` or `disabled` within this configuration document.
 
-| Flag Key | Type | Default | Description |
-| :--- | :---: | :---: | :--- |
-| `cosmic-reply` | Boolean | `false` | Enables GenAI auto-replies from "Station Zenith AI" for new guestbook transmissions. |
+### 🌐 Production GitOps Toggling
+
+In production, feature flags are managed via GitOps to decouple flag changes from code deployments:
+
+#### The Branch Split Model
+
+- **`main` branch:** Holds stable application code, backend endpoints, and infrastructure specs. Pushing to `main` triggers container builds and Cloud Deploy canary releases.
+- **`gitops` branch:** Dedicated exclusively to managing `flags.yaml`. The running Cloud Run sidecar container continuously polls this branch in your fork on a cron interval and hot-reloads the flag state in memory.
+
+#### Toggling Features in Production
+
+To enable or disable GenAI features in production, **do not trigger a code deployment or submit Pull Requests to the upstream repository**. Instead:
+
+1. Navigate to `flags.yaml` in the **`gitops`** branch of **your own forked repository** on GitHub.
+2. Edit the variations (e.g., set `defaultRule.variation` to `enabled`).
+3. Commit directly to **your fork's `gitops` branch**. Your deployed Cloud Run sidecar will automatically pick up the change and synchronize the state instantly.
+
+### 📋 Available Flags
+
+| Flag Key         |  Type   | Default | Description                                                                                            |
+| :--------------- | :-----: | :-----: | :----------------------------------------------------------------------------------------------------- |
+| `cosmic-reply`   | Boolean | `false` | Enables GenAI auto-replies from "Station Zenith AI" for new guestbook transmissions.                   |
 | `cosmic-summary` | Boolean | `false` | Enables the GenAI aggregation widget that summarizes recent guestbook activity at the top of the feed. |

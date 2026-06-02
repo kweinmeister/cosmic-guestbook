@@ -146,3 +146,8 @@ frontend/dist/
 backend/node_modules/
 frontend/node_modules/
 .gcloudignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
