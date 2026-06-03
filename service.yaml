@@ -6,13 +6,15 @@ spec:
   template:
     spec:
       containers:
-        - image: cosmic-guestbook
+        - name: cosmic-guestbook-1
+          image: cosmic-guestbook
           ports:
             - containerPort: 8080
           env:
             - name: GOOGLE_CLOUD_PROJECT
               value: "REPLACED_BY_DEPLOY" # from-param: ${PROJECT_ID}
-        - image: gofeatureflag/go-feature-flag:latest
+        - name: go-feature-flag-1
+          image: gofeatureflag/go-feature-flag:latest
           env:
             - name: RETRIEVERS_0_KIND
               value: github

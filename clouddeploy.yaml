@@ -13,7 +13,7 @@ serialPipeline:
             cloudRun:
               automaticTrafficControl: true
           canaryDeployment:
-            percentages: [50]
+            percentages: [10]
             verify: false
 ---
 apiVersion: deploy.cloud.google.com/v1
@@ -23,3 +23,16 @@ metadata:
 description: Production Cloud Run service
 run:
   location: projects/__PROJECT_ID__/locations/us-central1
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Automation
+metadata:
+  name: cosmic-guestbook-pipeline/auto-advance
+serviceAccount: __PROJECT_NUMBER__-compute@developer.gserviceaccount.com
+selector:
+  targets:
+  - id: prod
+rules:
+- advanceRolloutRule:
+    id: "advance-rule"
+    wait: 1m

@@ -153,3 +153,7 @@ Thumbs.db
 
 # Gemini
 .gemini
+
+# Local Deploy Artifacts
+artifacts.json
+deploy-src/
