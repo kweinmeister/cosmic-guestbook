@@ -6,11 +6,11 @@ cosmic-summary:
     enabled: true
     disabled: false
   defaultRule:
-    variation: enabled
+    variation: disabled
 
 cosmic-reply:
   variations:
     enabled: true
     disabled: false
   defaultRule:
-    variation: enabled
+    variation: disabled
