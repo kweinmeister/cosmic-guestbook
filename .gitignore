@@ -157,3 +157,5 @@ Thumbs.db
 # Local Deploy Artifacts
 artifacts.json
 deploy-src/
+
+.venv

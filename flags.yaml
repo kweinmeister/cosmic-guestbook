@@ -6,7 +6,7 @@ cosmic-summary:
     enabled: true
     disabled: false
   defaultRule:
-    variation: disabled
+    variation: enabled
 
 cosmic-reply:
   variations:
