@@ -79,11 +79,11 @@ describe("Cosmic Guestbook API", () => {
 		});
 
 		it("returns 429 when rate limit is exceeded", async () => {
-			// Send 100 requests to hit the limit
-			for (let i = 0; i < 100; i++) {
+			// Send 5 requests to hit the limit
+			for (let i = 0; i < 5; i++) {
 				await request(app).get("/api/entries");
 			}
-			// The 101st request should be rate-limited
+			// The 6th request should be rate-limited
 			const res = await request(app).get("/api/entries");
 			expect(res.statusCode).toEqual(429);
 			expect(res.body).toHaveProperty(
