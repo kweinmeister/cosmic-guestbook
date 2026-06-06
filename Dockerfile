@@ -1,22 +1,30 @@
-FROM node:26-slim
+# Stage 1: Frontend Builder
+FROM node:26-slim AS frontend-builder
 WORKDIR /app
-
-# Copy dependency manifests
 COPY package*.json ./
 COPY frontend/package*.json ./frontend/
-COPY backend/package*.json ./backend/
-
-# Install dependencies first (to leverage Docker layer caching)
-RUN npm install --prefix frontend && npm install --prefix backend
-
-# Copy the remaining project files
-COPY . .
-
-# Build frontend assets now that the source code is present
+RUN npm install --prefix frontend
+COPY frontend/ ./frontend/
 RUN npm run build --prefix frontend
 
-# Set environment explicitly for execution
+# Stage 2: Backend Builder (production dependencies only)
+FROM node:26-slim AS backend-builder
+WORKDIR /app
+COPY package*.json ./
+COPY backend/package*.json ./backend/
+RUN npm install --omit=dev --prefix backend
+
+# Stage 3: Final Runner
+FROM node:26-slim
+WORKDIR /app
 ENV NODE_ENV=production
 
-# Start the Express server
-CMD ["npm", "start"]
+# Copy only runtime resources
+COPY --from=backend-builder /app/backend/node_modules ./backend/node_modules
+COPY backend/ ./backend/
+COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+COPY package.json ./
+COPY flags.yaml ./
+
+# Start the application directly with Node.js to avoid npm runtime overhead
+CMD ["node", "backend/server.js"]
