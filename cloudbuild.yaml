@@ -1,3 +1,4 @@
+---
 steps:
   # Step 1: Install, Lint, and Test Backend
   - name: 'node:24-slim'
@@ -5,7 +6,10 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - 'npm ci && npm run lint && GOOGLE_CLOUD_PROJECT="demo-project" npm run test'
+      - |
+        npm ci && \
+        npm run lint && \
+        GOOGLE_CLOUD_PROJECT="demo-project" npm run test
     dir: 'backend'
 
   # Step 2: Install, Lint, and Test Frontend
@@ -15,7 +19,10 @@ steps:
     entrypoint: 'bash'
     args:
       - '-c'
-      - 'npm ci && npm run lint && npm run test'
+      - |
+        npm ci && \
+        npm run lint && \
+        npm run test
     dir: 'frontend'
 
   # Step 3: Build the Container Image
@@ -28,6 +35,7 @@ steps:
       - '--default-repo=us-central1-docker.pkg.dev/$PROJECT_ID/docker-repo'
 
   # Step 4: Deploy to Cloud Run via Cloud Deploy
+  # yamllint disable rule:line-length
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -35,9 +43,14 @@ steps:
       - |
         mkdir -p /tmp/deploy-src && \
         cp skaffold.yaml service-dev.yaml service-prod.yaml /tmp/deploy-src/ && \
-        sed -e "s/__PROJECT_ID__/$PROJECT_ID/g" -e "s/__PROJECT_NUMBER__/$PROJECT_NUMBER/g" clouddeploy.yaml > /tmp/deploy-src/clouddeploy.yaml && \
-        gcloud deploy apply --file=/tmp/deploy-src/clouddeploy.yaml --region=us-central1 && \
+        sed -e "s/__PROJECT_ID__/$PROJECT_ID/g" \
+            -e "s/__PROJECT_NUMBER__/$PROJECT_NUMBER/g" \
+            clouddeploy.yaml > /tmp/deploy-src/clouddeploy.yaml && \
+        gcloud deploy apply \
+            --file=/tmp/deploy-src/clouddeploy.yaml \
+            --region=us-central1 && \
         gcloud deploy releases create release-$BUILD_ID --delivery-pipeline=cosmic-guestbook-pipeline --region=us-central1 --deploy-parameters="REPOSITORY_SLUG=$REPO_FULL_NAME,PROJECT_ID=$PROJECT_ID" --build-artifacts=/workspace/artifacts.json --source=/tmp/deploy-src/
+  # yamllint enable rule:line-length
 
 options:
   logging: CLOUD_LOGGING_ONLY
