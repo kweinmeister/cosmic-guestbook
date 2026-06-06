@@ -5,8 +5,14 @@ metadata:
 build:
   artifacts:
     - image: cosmic-guestbook
-manifests:
-  rawYaml:
-    - service.yaml
+profiles:
+  - name: dev
+    manifests:
+      rawYaml:
+        - service-dev.yaml
+  - name: prod
+    manifests:
+      rawYaml:
+        - service-prod.yaml
 deploy:
   cloudrun: {}

@@ -159,3 +159,4 @@ artifacts.json
 deploy-src/
 
 .venv
+.agents

@@ -5,8 +5,10 @@ metadata:
 description: Cosmic Guestbook delivery pipeline
 serialPipeline:
   stages:
+    - targetId: dev
+      profiles: [dev]
     - targetId: prod
-      profiles: []
+      profiles: [prod]
       strategy:
         canary:
           runtimeConfig:
@@ -15,6 +17,14 @@ serialPipeline:
           canaryDeployment:
             percentages: [10]
             verify: false
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: dev
+description: Development Cloud Run service
+run:
+  location: projects/__PROJECT_ID__/locations/us-central1
 ---
 apiVersion: deploy.cloud.google.com/v1
 kind: Target
