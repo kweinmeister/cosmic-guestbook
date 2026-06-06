@@ -3,6 +3,8 @@ apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   name: cosmic-guestbook-prod
+  annotations:
+    run.googleapis.com/invoker-iam-disabled: 'true'
 spec:
   template:
     metadata:
