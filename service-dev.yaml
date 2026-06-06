@@ -4,6 +4,9 @@ metadata:
   name: cosmic-guestbook-dev
 spec:
   template:
+    metadata:
+      annotations:
+        run.googleapis.com/startup-cpu-boost: 'true'
     spec:
       containers:
         - name: cosmic-guestbook-1
