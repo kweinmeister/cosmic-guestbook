@@ -24,3 +24,5 @@ spec:
               value: flags.yaml
             - name: RETRIEVERS_0_BRANCH
               value: demo
+            - name: RETRIEVERS_0_POLLINGINTERVAL
+              value: "10000"
