@@ -31,6 +31,7 @@ kind: Target
 metadata:
   name: prod
 description: Production Cloud Run service
+requireApproval: true
 run:
   location: projects/__PROJECT_ID__/locations/us-central1
 ---
