@@ -36,7 +36,7 @@ const entries = [
 ];
 
 // --- GenAI Setup ---
-const geminiModel = process.env.GEMINI_MODEL || "gemini-3.1-flash-lite-preview";
+const geminiModel = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
 
 const project = process.env.GOOGLE_CLOUD_PROJECT;
 if (!project) {
